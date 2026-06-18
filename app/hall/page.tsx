@@ -3,11 +3,34 @@ import { HALL_OF_DIAMONDS, PLAYERS_BY_ID } from "@/data/players";
 import { getPlayerTrajectory } from "@/lib/scoring";
 import Link from "next/link";
 
+const VALIDATION_PLAYERS = [
+  {
+    id: "reaves",
+    title: "Reaves — undrafted to recognized",
+    blurb: "Impact led in 2023-24 (+8); perception climbed to match by 2025-26",
+  },
+  {
+    id: "brunson",
+    title: "Brunson — late-pick star gap",
+    blurb: "Peak +12 in 2022-23; gap narrowed but impact still leads (+6 in 2025-26)",
+  },
+  {
+    id: "isaiah-hartenstein",
+    title: "Hartenstein — undrafted anchor",
+    blurb: "Sustained +8–12 diamonds as a starting-caliber center without All-Star votes",
+  },
+] as const;
+
 export default function HallPage() {
-  const brunsonData = getPlayerTrajectory(PLAYERS_BY_ID.get("brunson") ?? []).map((p) => ({
-    season: p.season,
-    impact: p.impact,
-    perception: p.perception,
+  const validationCharts = VALIDATION_PLAYERS.map(({ id, title, blurb }) => ({
+    id,
+    title,
+    blurb,
+    data: getPlayerTrajectory(PLAYERS_BY_ID.get(id) ?? []).map((p) => ({
+      season: p.season,
+      impact: p.impact,
+      perception: p.perception,
+    })),
   }));
 
   return (
@@ -15,7 +38,8 @@ export default function HallPage() {
       <section className="space-y-3">
         <h1 className="text-3xl font-semibold text-white">Hall of Diamonds</h1>
         <p className="max-w-2xl text-zinc-400">
-          Players the model flagged before they broke out — proof that impact can precede perception.
+          Players the model flagged before perception caught up — with calibrated peaks
+          from the current formula, not hand-tuned overrides.
         </p>
       </section>
 
@@ -38,12 +62,32 @@ export default function HallPage() {
         ))}
       </div>
 
-      <section className="rounded-lg border border-surface-border bg-surface-raised p-6 space-y-4">
-        <h2 className="text-lg font-medium text-white">Model validation — Brunson</h2>
-        <p className="text-sm text-zinc-500">
-          Impact surged early; perception caught up after the 2026 championship
-        </p>
-        <ImpactPerceptionChart data={brunsonData} />
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-lg font-medium text-white">Model validation</h2>
+          <p className="text-sm text-zinc-500 max-w-2xl">
+            Three archetypes the recalibrated scoring is built around — established rotation
+            undervaluation, late-pick stars, and undrafted role players.
+          </p>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          {validationCharts.map(({ id, title, blurb, data }) => (
+            <div
+              key={id}
+              className="rounded-lg border border-surface-border bg-surface-raised p-5 space-y-4"
+            >
+              <div>
+                <h3 className="font-medium text-white">{title}</h3>
+                <p className="mt-1 text-sm text-zinc-500">{blurb}</p>
+              </div>
+              {data.length > 0 ? (
+                <ImpactPerceptionChart data={data} />
+              ) : (
+                <p className="text-sm text-zinc-500">No eligible seasons in pool.</p>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

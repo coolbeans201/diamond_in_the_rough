@@ -7,7 +7,8 @@ export default function PlayersIndexPage() {
       <section className="space-y-3">
         <h1 className="text-3xl font-semibold text-white">Player Profiles</h1>
         <p className="text-zinc-400">
-          Deep dives on players flagged by the model — stats, trajectory, and Doubt Board rebuttals.
+          Deep dives on players the model highlights — stats, trajectory, and Doubt Board rebuttals.
+          Reaves is the flagship; Brunson, Pritchard, Mobley, and Hartenstein show other archetypes.
         </p>
       </section>
       <div className="grid gap-4 sm:grid-cols-2">

@@ -1,5 +1,4 @@
 import { DiamondTrajectory } from "@/components/Charts";
-import { ScoreSourceBadge } from "@/components/ScoreSourceBadge";
 import { PLAYERS_BY_ID, PROFILES } from "@/data/players";
 import { getPlayerSeasons, getPlayerTrajectory } from "@/lib/scoring";
 import Link from "next/link";
@@ -81,7 +80,6 @@ export default async function PlayerPage({ params }: Props) {
                 <th className="px-4 py-3 font-medium text-right">Impact</th>
                 <th className="px-4 py-3 font-medium text-right">Perception</th>
                 <th className="px-4 py-3 font-medium text-right">Diamond</th>
-                <th className="px-4 py-3 font-medium">Scores</th>
                 <th className="px-4 py-3 font-medium">Note</th>
               </tr>
             </thead>
@@ -99,9 +97,6 @@ export default async function PlayerPage({ params }: Props) {
                   <td className={`px-4 py-3 text-right font-medium tabular-nums ${s.diamond >= 0 ? "text-diamond" : "text-gold"}`}>
                     {s.diamond > 0 ? "+" : ""}
                     {s.diamond}
-                  </td>
-                  <td className="px-4 py-3">
-                    <ScoreSourceBadge source={s.scoreSource} />
                   </td>
                   <td className="px-4 py-3 text-zinc-500">{s.highlight}</td>
                 </tr>

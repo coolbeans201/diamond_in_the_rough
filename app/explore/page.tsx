@@ -53,13 +53,13 @@ export default async function ExplorePage({ searchParams }: Props) {
         </section>
 
         <section className="rounded-lg border border-surface-border bg-surface-raised p-6 space-y-4">
-          <h2 className="text-lg font-medium text-white">Curated impact model</h2>
+          <h2 className="text-lg font-medium text-white">Impact model</h2>
           <p className="text-sm text-zinc-500">
-            Hand-tuned scores target this 50% RS / 50% playoff blend.{" "}
+            All players use the same box-score formula.{" "}
             <a href="/methodology" className="text-accent hover:underline">
               See methodology
             </a>{" "}
-            for the exact estimated formulas.
+            for the exact formulas.
           </p>
           <ul className="space-y-2 text-sm text-zinc-300">
             <li className="flex justify-between border-b border-surface-border pb-2">

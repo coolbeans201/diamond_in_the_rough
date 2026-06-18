@@ -12,12 +12,13 @@ describe("compute-scores heuristics", () => {
     gp: 79,
     plusMinus: 3.7,
     age: 23,
-    draftPick: 1,
+    draftPick: 5,
+    playoffGp: 15,
   };
 
   it("rates young stars as diamonds, not fool's gold", () => {
     const impact = computeImpact(ant2024);
-    const perception = computePerception(ant2024);
+    const perception = computePerception(ant2024, impact);
     expect(impact).toBeGreaterThanOrEqual(80);
     expect(perception).toBeLessThanOrEqual(impact);
     expect(impact - perception).toBeGreaterThan(0);
@@ -35,9 +36,48 @@ describe("compute-scores heuristics", () => {
       plusMinus: -2.0,
       age: 33,
       draftPick: 4,
+      playoffGp: 0,
     };
     const impact = computeImpact(westbrook);
-    const perception = computePerception(westbrook);
+    const perception = computePerception(westbrook, impact);
     expect(perception).toBeGreaterThan(impact);
+  });
+
+  it("skips unknown-prospect discount for top-3 lottery picks", () => {
+    const edwardsRookie = {
+      pts: 19.3,
+      reb: 4.7,
+      ast: 2.9,
+      stl: 1.1,
+      blk: 0.5,
+      mpg: 32.1,
+      gp: 72,
+      plusMinus: -3.2,
+      age: 19,
+      draftPick: 1,
+      playoffGp: 0,
+    };
+    const impact = computeImpact(edwardsRookie);
+    const perception = computePerception(edwardsRookie, impact);
+    expect(impact - perception).toBeLessThanOrEqual(6);
+  });
+
+  it("caps end-of-line scoring reputation for low-output veterans", () => {
+    const melo = {
+      pts: 13.3,
+      reb: 4.2,
+      ast: 0.9,
+      stl: 0.7,
+      blk: 0.4,
+      mpg: 26.0,
+      gp: 69,
+      plusMinus: -1.2,
+      age: 37,
+      draftPick: 3,
+      playoffGp: 0,
+    };
+    const impact = computeImpact(melo);
+    const perception = computePerception(melo, impact);
+    expect(perception).toBeLessThanOrEqual(impact + 8);
   });
 });

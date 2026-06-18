@@ -1,5 +1,4 @@
 import type { ScoredPlayer } from "@/lib/types";
-import { ScoreSourceBadge } from "@/components/ScoreSourceBadge";
 import Link from "next/link";
 
 type Props = {
@@ -34,12 +33,9 @@ export function RankingsTable({ players, variant }: Props) {
             >
               <td className="px-4 py-3 text-zinc-500">{i + 1}</td>
               <td className="px-4 py-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link href={`/players/${p.id}`} className="font-medium text-white hover:text-accent">
-                    {p.name}
-                  </Link>
-                  <ScoreSourceBadge source={p.scoreSource} />
-                </div>
+                <Link href={`/players/${p.id}`} className="font-medium text-white hover:text-accent">
+                  {p.name}
+                </Link>
               </td>
               <td className="px-4 py-3 text-zinc-400">{p.team}</td>
               <td className="px-4 py-3 text-zinc-400">{p.pos}</td>

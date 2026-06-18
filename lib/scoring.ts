@@ -4,6 +4,8 @@ export const MIN_RS_GP = 40;
 export const MIN_MPG = 20;
 export const MIN_PLAYOFF_GP = 4;
 export const RANKING_LIMIT = 15;
+/** Minimum impact to qualify for the diamond list (filters low-output youth-skew noise). */
+export const MIN_DIAMOND_IMPACT = 65;
 
 export function withDiamond(player: PlayerSeason): ScoredPlayer {
   return { ...player, diamond: player.impact - player.perception };
@@ -25,8 +27,13 @@ export function getRankings(players: ScoredPlayer[]) {
   );
 
   const diamonds = [...players]
-    .filter((p) => !polishedIds.has(p.id) && p.diamond > 0)
-    .sort((a, b) => b.diamond - a.diamond)
+    .filter(
+      (p) =>
+        !polishedIds.has(p.id) &&
+        p.diamond > 0 &&
+        p.impact >= MIN_DIAMOND_IMPACT,
+    )
+    .sort((a, b) => b.diamond - a.diamond || b.impact - a.impact)
     .slice(0, RANKING_LIMIT);
 
   const foolGold = [...players]

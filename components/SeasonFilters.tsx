@@ -1,6 +1,6 @@
 "use client";
 
-import { SEASONS, POSITIONS, SPECULATIVE_SEASON } from "@/lib/types";
+import { SEASONS, POSITIONS } from "@/lib/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 
@@ -32,7 +32,6 @@ export function SeasonFilters() {
           {SEASONS.map((s) => (
             <option key={s} value={s}>
               {s}
-              {s === SPECULATIVE_SEASON ? " *" : ""}
             </option>
           ))}
         </select>
@@ -54,12 +53,6 @@ export function SeasonFilters() {
           </span>
         )}
       </div>
-      {season === SPECULATIVE_SEASON && (
-        <p className="text-xs text-amber-500/90 max-w-2xl">
-          * {SPECULATIVE_SEASON} uses the same static stats snapshot as other seasons; curated
-          narrative overlays (e.g. championship arcs) are illustrative, not live-loaded.
-        </p>
-      )}
     </div>
   );
 }

@@ -1,16 +1,14 @@
 # Diamond in the Rough
 
-Identifies the undervalued and overvalued NBA players (quieting the Jalen Brunson doubters).
-
 An NBA analytics web app that surfaces **undervalued players** by comparing advanced impact metrics against public perception.
 
 ## What it does
 
 - **Rankings** — Top 15 "diamonds" (undervalued) and Fool's Gold (overvalued) per season, 2016–17 through 2025–26
 - **Explore** — Impact vs Perception scatter plot with season/position filters
-- **Profiles** — Deep dives with Doubt Board (Brunson flagship + Maxey, Jalen Williams, Mobley, Hart)
-- **Hall of Diamonds** — Players flagged before they broke out
-- **Methodology** — Transparent scoring model and eligibility gates
+- **Profiles** — Deep dives with Doubt Board (Reaves flagship + Pritchard, Brunson, Maxey, Mobley, Hartenstein)
+- **Hall of Diamonds** — Players the model flagged before perception caught up, with live peak scores
+- **Methodology** — Transparent scoring model, peer-relative tiers, and eligibility gates
 
 ## Scoring model
 
@@ -18,11 +16,14 @@ An NBA analytics web app that surfaces **undervalued players** by comparing adva
 Diamond Score = Impact Score − Perception Score
 ```
 
-- **Impact:** 50% regular season / 50% playoffs (EPM, on/off, clutch, TS%, creation, durability)
-- **Perception:** Contract tier, accolades, draft pedigree, media visibility, championship resume
+- **Formula-only:** Impact and perception come from one unified formula for every player — no hand-tuned score overrides.
+- **Peer-relative tiers:** Scoring volume, defense, hub stars, and passing bigs are compared within position peer percentiles, not wing-vs-center proxies.
+- **Draft & rotation logic:** Draft-slot lag fades for established rotation players (age 28+, heavy minutes). Late first-round picks get partial lag; undrafted breakouts retain more.
+- **Defensive recognition:** Rim anchors and stock-heavy defenders (Gobert, Caruso, Mobley) are scored through peer defense percentiles, not punished as Fool's Gold.
+- **Featured entries:** Highlights, confidence, and injury flags only — metadata for profiles, not score overrides.
 - **Eligibility:** ≥40 RS GP + ≥20 MPG, or ≥4 playoff GP; season-long injuries excluded
-- **Pool:** Every eligible NBA player per season (auto-fetched from stats.nba.com); curated scores overlay featured players
-- **Fool's Gold:** Only players with negative Diamond Score (never padded with positive scores)
+- **Pool:** Every eligible NBA player per season (auto-fetched from stats.nba.com)
+- **Fool's Gold:** Only players with negative Diamond Score; proportional reputation drift (no flat floor)
 
 ## Tech stack
 
@@ -30,7 +31,7 @@ Diamond Score = Impact Score − Perception Score
 - TypeScript
 - Tailwind CSS
 - Recharts
-- Vitest (scoring engine tests)
+- Vitest (scoring engine + integrity tests)
 
 ## Getting started
 
@@ -66,17 +67,18 @@ Open [http://localhost:3000](http://localhost:3000)
 ## Scripts
 
 ```bash
-npm run dev      # Development server
-npm run build    # Production build
-npm run test           # Scoring engine + integrity audit
+npm run dev            # Development server
+npm run build          # Production build
+npm run test           # Scoring engine + integrity audit (47 tests)
 npm run audit:scoring  # Data/scoring anomaly check only
 npm run generate-pool  # Refresh eligibility base from stats.nba.com
-npm run lint     # ESLint
+npm run lint           # ESLint
+npx tsx scripts/peak-diamonds.ts  # Print peak diamond scores for curated players
 ```
 
 ## Flagship case study
 
-Jalen Brunson ranked as a strong diamond in 2023–24 and 2024–25 **before** the 2026 championship closed the perception gap — validating the model's core thesis.
+**Austin Reaves** is the flagship profile: flagged as a +8 diamond in 2023–24 as an undrafted rotation player, with perception climbing from 63 to 83 by 2025–26 as the gap nearly closed. The Hall page validates three archetypes — Reaves (established rotation undervaluation), Brunson (late-pick star with a narrowing gap), and Hartenstein (undrafted anchor).
 
 ## Future work
 

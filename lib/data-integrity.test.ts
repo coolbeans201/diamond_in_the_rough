@@ -24,7 +24,7 @@ describe("data integrity", () => {
       console.log(
         "\nOrphan pool entries:\n" +
           orphans
-            .map((p) => `  • ${p.season} ${p.name} source=${p.scoreSource}`)
+            .map((p) => `  • ${p.season} ${p.name}`)
             .join("\n"),
       );
     }

@@ -1,6 +1,5 @@
 export type Position = "PG" | "SG" | "SF" | "PF" | "C";
 export type Confidence = "High" | "Medium" | "Low";
-export type ScoreSource = "curated" | "estimated";
 
 export type PlayerSeason = {
   season: string;
@@ -12,15 +11,26 @@ export type PlayerSeason = {
   perception: number;
   highlight: string;
   confidence: Confidence;
-  scoreSource: ScoreSource;
   rsGp: number;
   mpg: number;
   playoffGp: number;
   seasonLongInjury?: boolean;
 };
 
-/** Hand-tuned rows before scoreSource is applied at merge time. */
-export type CuratedPlayerSeason = Omit<PlayerSeason, "scoreSource">;
+/** Featured-player metadata: highlights, confidence, injury flags. Scores come from the formula. */
+export type CuratedPlayerSeason = {
+  season: string;
+  id: string;
+  name: string;
+  team: string;
+  pos: Position;
+  highlight: string;
+  confidence: Confidence;
+  rsGp: number;
+  mpg: number;
+  playoffGp: number;
+  seasonLongInjury?: boolean;
+};
 
 export type ScoredPlayer = PlayerSeason & {
   diamond: number;
@@ -58,9 +68,6 @@ export const SEASONS = [
 ] as const;
 
 export type Season = (typeof SEASONS)[number];
-
-/** Season with speculative curated narrative overlays (stats are still a static snapshot). */
-export const SPECULATIVE_SEASON: Season = "2025-26";
 
 export const POSITIONS: Array<Position | "All"> = [
   "All",

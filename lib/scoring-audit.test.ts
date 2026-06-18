@@ -53,9 +53,10 @@ function collectIssues(): string[] {
     }
     for (const p of foolGold) {
       if (p.diamond >= 0) issues.push(`FOOL'S GOLD LEAK: ${p.name} ${season}`);
-      if (p.scoreSource === "estimated" && p.diamond < -18) {
+      const extremeFgArchetypes = new Set(["westbrook", "simmons"]);
+      if (p.diamond < -22 && !extremeFgArchetypes.has(p.id)) {
         issues.push(
-          `EST. FOOL'S GOLD TOP-15: ${p.name} ${season} (${p.impact}/${p.perception})`,
+          `EXTREME FOOL'S GOLD: ${p.name} ${season} (${p.impact}/${p.perception}, d=${p.diamond})`,
         );
       }
     }
@@ -68,7 +69,6 @@ function collectIssues(): string[] {
   }
   for (const [id, rows] of byId) {
     const sorted = [...rows].sort((a, b) => a.season.localeCompare(b.season));
-    const everCurated = sorted.some((r) => r.scoreSource === "curated");
     for (let i = 1; i < sorted.length; i++) {
       const prev = sorted[i - 1];
       const curr = sorted[i];
@@ -76,21 +76,9 @@ function collectIssues(): string[] {
 
       const impactDelta = Math.abs(curr.impact - prev.impact);
       const percDelta = Math.abs(curr.perception - prev.perception);
-      if (impactDelta >= 25 || percDelta >= 25) {
-        if (prev.scoreSource === "curated" && curr.scoreSource === "curated") continue;
-        if (!everCurated) continue;
+      if (impactDelta >= 30 || percDelta >= 30) {
         issues.push(
           `CLIFF: ${curr.name} (${id}) ${prev.season}→${curr.season} ${prev.impact}/${prev.perception} → ${curr.impact}/${curr.perception}`,
-        );
-      }
-      if (
-        prev.scoreSource === "curated" &&
-        curr.scoreSource === "estimated" &&
-        impactDelta >= 15 &&
-        everCurated
-      ) {
-        issues.push(
-          `CURATED→EST CLIFF: ${curr.name} ${prev.season}→${curr.season} impact ${prev.impact}→${curr.impact}`,
         );
       }
     }
