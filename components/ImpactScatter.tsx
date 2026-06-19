@@ -1,6 +1,7 @@
 "use client";
 
 import type { ScoredPlayer } from "@/lib/types";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 export type ScatterPlayer = Pick<
@@ -32,6 +33,11 @@ export function ImpactScatter({ players }: Props) {
     }
     return list;
   }, [players, query, view]);
+
+  const selectedPlayer =
+    players.find((p) => p.id === selected) ??
+    visible.find((p) => p.id === selected) ??
+    null;
 
   const w = 560;
   const h = 400;
@@ -128,6 +134,22 @@ export function ImpactScatter({ players }: Props) {
       <p className="mt-2 text-xs text-zinc-500">
         Showing {visible.length} player{visible.length === 1 ? "" : "s"} · diagonal = fair value · click a dot to highlight
       </p>
+      {selectedPlayer && (
+        <p className="mt-2 text-sm">
+          <Link
+            href={`/players/${selectedPlayer.id}`}
+            className="font-medium text-accent hover:underline"
+          >
+            {selectedPlayer.name}
+          </Link>
+          <span className="text-zinc-500">
+            {" "}
+            — impact {selectedPlayer.impact}, perception {selectedPlayer.perception}, diamond{" "}
+            {selectedPlayer.diamond > 0 ? "+" : ""}
+            {selectedPlayer.diamond}
+          </span>
+        </p>
+      )}
       <div className="mt-3 flex gap-6 text-xs text-zinc-400">
         <span className="flex items-center gap-2">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-diamond" />

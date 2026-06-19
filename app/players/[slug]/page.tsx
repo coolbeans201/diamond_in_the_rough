@@ -1,5 +1,7 @@
 import { DiamondTrajectory } from "@/components/Charts";
+import { ProfileStatGrid } from "@/components/ProfileStatGrid";
 import { PLAYERS_BY_ID, PROFILES } from "@/data/players";
+import { buildPlayerSummaryStats } from "@/lib/profile-stats";
 import { getPlayerSeasons, getPlayerTrajectory } from "@/lib/scoring";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,49 +25,54 @@ export default async function PlayerPage({ params }: Props) {
   const name = profile?.name ?? latest.name;
   const team = profile?.team ?? latest.team;
   const pos = profile?.pos ?? latest.pos;
+  const summaryStats = profile?.stats ?? buildPlayerSummaryStats(seasons);
 
   return (
     <div className="space-y-10">
       <section className="space-y-3">
         <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-500">
-          <Link href="/" className="hover:text-white">Rankings</Link>
+          <Link href="/" className="hover:text-white">
+            Rankings
+          </Link>
+          <span>/</span>
+          <Link href="/players" className="hover:text-white">
+            Players
+          </Link>
           <span>/</span>
           <span className="text-zinc-300">{name}</span>
         </div>
-        <h1 className="text-3xl font-semibold text-white">{name}</h1>
-        <p className="text-zinc-400">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl font-semibold text-white">{name}</h1>
+          {profile && (
+            <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+              Spotlight
+            </span>
+          )}
+        </div>
+        <p className="max-w-2xl text-zinc-400">
           {profile?.tagline ??
             "Season-by-season impact vs perception across every eligible year in the pool."}
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-md bg-surface-raised border border-surface-border px-2 py-1 text-xs text-zinc-400">
+          <span className="rounded-md border border-surface-border bg-surface-raised px-2 py-1 text-xs text-zinc-400">
             {team}
           </span>
-          <span className="rounded-md bg-surface-raised border border-surface-border px-2 py-1 text-xs text-zinc-400">
+          <span className="rounded-md border border-surface-border bg-surface-raised px-2 py-1 text-xs text-zinc-400">
             {pos}
           </span>
-          <span className="rounded-md bg-surface-raised border border-surface-border px-2 py-1 text-xs text-zinc-400">
+          <span className="rounded-md border border-surface-border bg-surface-raised px-2 py-1 text-xs text-zinc-400">
             {seasons.length} eligible season{seasons.length === 1 ? "" : "s"}
           </span>
         </div>
       </section>
 
-      {profile?.stats && (
-        <section className="grid gap-4 sm:grid-cols-3">
-          {profile.stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-lg border border-surface-border bg-surface-raised p-4"
-            >
-              <p className="text-2xl font-semibold text-white tabular-nums">{stat.value}</p>
-              <p className="text-sm text-zinc-500">{stat.label}</p>
-            </div>
-          ))}
-        </section>
-      )}
+      <ProfileStatGrid
+        stats={summaryStats}
+        title={profile ? "Spotlight snapshot" : "At a glance"}
+      />
 
-      <section className="rounded-lg border border-surface-border bg-surface-raised p-6 space-y-4">
-        <h2 className="text-lg font-medium text-white">Diamond Score trajectory</h2>
+      <section className="space-y-4 rounded-lg border border-surface-border bg-surface-raised p-6">
+        <h2 className="text-lg font-medium text-white">Diamond score trajectory</h2>
         <DiamondTrajectory data={trajectory} />
       </section>
 
@@ -85,7 +92,10 @@ export default async function PlayerPage({ params }: Props) {
             </thead>
             <tbody>
               {seasons.map((s) => (
-                <tr key={s.season} className="border-t border-surface-border">
+                <tr
+                  key={s.season}
+                  className="border-t border-surface-border hover:bg-surface-raised/40"
+                >
                   <td className="px-4 py-3">
                     <Link href={`/?season=${s.season}`} className="text-white hover:text-accent">
                       {s.season}
@@ -94,7 +104,11 @@ export default async function PlayerPage({ params }: Props) {
                   <td className="px-4 py-3 text-zinc-400">{s.team}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{s.impact}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{s.perception}</td>
-                  <td className={`px-4 py-3 text-right font-medium tabular-nums ${s.diamond >= 0 ? "text-diamond" : "text-gold"}`}>
+                  <td
+                    className={`px-4 py-3 text-right font-medium tabular-nums ${
+                      s.diamond > 0 ? "text-diamond" : s.diamond < 0 ? "text-gold" : "text-zinc-400"
+                    }`}
+                  >
                     {s.diamond > 0 ? "+" : ""}
                     {s.diamond}
                   </td>
@@ -133,7 +147,7 @@ export default async function PlayerPage({ params }: Props) {
                 <Link
                   key={p.id}
                   href={`/players/${p.id}`}
-                  className="rounded-md border border-surface-border px-3 py-1.5 text-sm text-zinc-400 hover:text-white hover:border-accent/50"
+                  className="rounded-md border border-surface-border px-3 py-1.5 text-sm text-zinc-400 hover:border-accent/50 hover:text-white"
                 >
                   {p.name}
                 </Link>

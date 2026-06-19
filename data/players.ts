@@ -1,4 +1,5 @@
 import type { HallEntry, PlayerProfile, CuratedPlayerSeason, PlayerSeason } from "@/lib/types";
+import type { PlayerDirectoryEntry } from "@/lib/player-search";
 import { SEASONS } from "@/lib/types";
 import { buildPlayerPool } from "@/lib/build-player-pool";
 import { CONTEMPORARY_ENTRIES } from "./entries-contemporary";
@@ -49,6 +50,29 @@ export const PLAYERS_BY_SEASON: Readonly<Record<string, readonly PlayerSeason[]>
 /** All eligible seasons for a stable player id (for trajectories / profiles). */
 export const PLAYERS_BY_ID: ReadonlyMap<string, readonly PlayerSeason[]> = indexes.byId;
 
+function buildPlayerDirectory(
+  byId: ReadonlyMap<string, readonly PlayerSeason[]>,
+): PlayerDirectoryEntry[] {
+  const entries: PlayerDirectoryEntry[] = [];
+
+  for (const [id, seasons] of byId) {
+    const latest = [...seasons].sort((a, b) => b.season.localeCompare(a.season))[0];
+    entries.push({
+      id,
+      name: latest.name,
+      team: latest.team,
+      pos: latest.pos,
+    });
+  }
+
+  return entries.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** One row per player for search and navigation. */
+export const PLAYER_DIRECTORY: readonly PlayerDirectoryEntry[] = buildPlayerDirectory(
+  indexes.byId,
+);
+
 export { POOL_GENERATED_AT } from "@/lib/build-player-pool";
 
 export const HALL_OF_DIAMONDS: HallEntry[] = [
@@ -70,11 +94,11 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "Flagship case — undrafted rotation player the model flagged before the league fully priced him in",
     stats: [
       { label: "Draft slot", value: "Undrafted" },
-      { label: "Peak diamond", value: "+8" },
-      { label: "2024-25 impact", value: "79" },
-      { label: "2025-26 impact", value: "82" },
-      { label: "2025-26 perception", value: "83" },
-      { label: "Diamond gap closed", value: "2025-26" },
+      { label: "Peak diamond", value: "+8", detail: "2023-24", tone: "diamond" },
+      { label: "Impact", value: "82", detail: "2025-26" },
+      { label: "Perception", value: "83", detail: "2025-26" },
+      { label: "Diamond", value: "−1", detail: "2025-26", tone: "gold" },
+      { label: "Gap trend", value: "Closed", detail: "From +8 to near-even" },
     ],
     doubts: [
       { take: "He's just a Laker role player", rebuttal: "Impact hit 79–82 across two seasons with starter minutes and primary creation duties — not a spot-up specialist profile." },
@@ -91,10 +115,11 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "Late first-round sixth man — steady climb as recognition catches up to winning minutes",
     stats: [
       { label: "Draft slot", value: "26th" },
-      { label: "2024-25 diamond", value: "+2" },
-      { label: "2025-26 impact", value: "75" },
-      { label: "2025-26 perception", value: "73" },
-      { label: "Sixth Man", value: "2024-25" },
+      { label: "Peak diamond", value: "+2", detail: "2024-25", tone: "diamond" },
+      { label: "Impact", value: "75", detail: "2025-26" },
+      { label: "Perception", value: "73", detail: "2025-26" },
+      { label: "Diamond", value: "+2", detail: "2025-26", tone: "diamond" },
+      { label: "Sixth Man", value: "Winner", detail: "2024-25" },
     ],
     doubts: [
       { take: "Backup guard on a stacked team", rebuttal: "28+ MPG and 45+ GP seasons with 70+ impact — the formula treats established rotation minutes as signal, not noise." },
@@ -110,11 +135,11 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "Second-round pick with a multi-year diamond gap — perception rising, impact still ahead",
     stats: [
       { label: "Draft slot", value: "33rd" },
-      { label: "Peak diamond", value: "+12" },
-      { label: "2023-24 impact", value: "92" },
-      { label: "2023-24 perception", value: "84" },
-      { label: "2025-26 diamond", value: "+6" },
-      { label: "Clutch POY", value: "2024-25" },
+      { label: "Peak diamond", value: "+12", detail: "2022-23", tone: "diamond" },
+      { label: "Impact", value: "89", detail: "2025-26" },
+      { label: "Perception", value: "83", detail: "2025-26" },
+      { label: "Diamond", value: "+6", detail: "2025-26", tone: "diamond" },
+      { label: "Clutch POY", value: "Winner", detail: "2024-25" },
     ],
     doubts: [
       { take: "He's already an All-NBA star — not undervalued", rebuttal: "Perception reached 84 in 2023-24 but impact was 92; the gap narrowed to +6, not zero — still a diamond, not Fool's Gold." },
@@ -131,10 +156,10 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "30th pick with sustained +8–9 diamond seasons as a franchise scoring guard",
     stats: [
       { label: "Draft slot", value: "30th" },
-      { label: "Peak diamond", value: "+9" },
-      { label: "2023-24 impact", value: "87" },
-      { label: "2025-26 impact", value: "92" },
-      { label: "2025-26 diamond", value: "+8" },
+      { label: "Peak diamond", value: "+9", detail: "2023-24", tone: "diamond" },
+      { label: "Impact", value: "92", detail: "2025-26" },
+      { label: "Perception", value: "84", detail: "2025-26" },
+      { label: "Diamond", value: "+8", detail: "2025-26", tone: "diamond" },
     ],
     doubts: [
       { take: "All-Star = fully recognized now", rebuttal: "Impact hit 92 in 2025-26 with perception at 84 — still +8; stardom and undervaluation can coexist in the formula." },
@@ -149,10 +174,11 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "Defensive anchor — the model now recognizes rim protection instead of punishing him as Fool's Gold",
     stats: [
       { label: "Draft slot", value: "3rd" },
-      { label: "2024-25 impact", value: "85" },
-      { label: "2024-25 perception", value: "84" },
-      { label: "2024-25 diamond", value: "+1" },
-      { label: "2025-26 alignment", value: "85/85" },
+      { label: "Peak diamond", value: "+1", detail: "2024-25", tone: "diamond" },
+      { label: "Impact", value: "85", detail: "2025-26" },
+      { label: "Perception", value: "85", detail: "2025-26" },
+      { label: "Diamond", value: "0", detail: "2025-26", tone: "neutral" },
+      { label: "Alignment", value: "Even", detail: "Impact matches perception" },
     ],
     doubts: [
       { take: "Third pick can't be a diamond", rebuttal: "Lottery pedigree caps extreme gaps for young defensive bigs, but peer-relative defense tiers prevent the old Fool's Gold misreads." },
@@ -168,10 +194,10 @@ export const PROFILES: Record<string, PlayerProfile> = {
     tagline: "Undrafted center with back-to-back +8–12 diamond seasons as an on/off anchor",
     stats: [
       { label: "Draft slot", value: "Undrafted" },
-      { label: "Peak diamond", value: "+12" },
-      { label: "2024-25 impact", value: "76" },
-      { label: "2024-25 perception", value: "64" },
-      { label: "2025-26 diamond", value: "+8" },
+      { label: "Peak diamond", value: "+12", detail: "2024-25", tone: "diamond" },
+      { label: "Impact", value: "74", detail: "2025-26" },
+      { label: "Perception", value: "66", detail: "2025-26" },
+      { label: "Diamond", value: "+8", detail: "2025-26", tone: "diamond" },
     ],
     doubts: [
       { take: "Backup center on a contender", rebuttal: "Starter-level minutes and rebounding anchor impact in New York — undrafted path keeps perception lagging behind box-score role value." },

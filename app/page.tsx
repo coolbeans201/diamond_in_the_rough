@@ -1,8 +1,8 @@
 import { RankingsTable } from "@/components/RankingsTable";
 import { SeasonFilters } from "@/components/SeasonFilters";
-import { DiamondTrajectory } from "@/components/Charts";
-import { PLAYERS_BY_ID, PLAYERS_BY_SEASON, POOL_GENERATED_AT } from "@/data/players";
-import { getPlayerTrajectory, getRankings, scoreSeasonPool } from "@/lib/scoring";
+import { PLAYERS_BY_SEASON, POOL_GENERATED_AT } from "@/data/players";
+import { getRankings, scoreSeasonPool } from "@/lib/scoring";
+import Link from "next/link";
 import { Suspense } from "react";
 
 function formatPoolDate(iso: string): string {
@@ -23,8 +23,6 @@ export default async function HomePage({ searchParams }: Props) {
   const pos = params.pos ?? "All";
   const players = scoreSeasonPool(PLAYERS_BY_SEASON[season] ?? [], pos);
   const { diamonds, foolGold } = getRankings(players);
-  const reavesTraj = getPlayerTrajectory(PLAYERS_BY_ID.get("reaves") ?? []);
-  const pritchardTraj = getPlayerTrajectory(PLAYERS_BY_ID.get("payton-pritchard") ?? []);
 
   return (
     <div className="space-y-10">
@@ -34,9 +32,11 @@ export default async function HomePage({ searchParams }: Props) {
         </h1>
         <p className="max-w-2xl text-zinc-400">
           Rankings of the most undervalued NBA players each season — where advanced
-          impact (50% regular season / 50% playoffs) outruns public perception.
-          Austin Reaves is the flagship case: flagged as a diamond in 2023-24, nearly
-          aligned by 2025-26 as perception caught up.
+          impact (50% regular season / 50% playoffs) outruns public perception.{" "}
+          <Link href="/players/reaves" className="text-accent hover:underline">
+            See a case study
+          </Link>{" "}
+          for how the gap can close over time.
         </p>
         <Suspense>
           <SeasonFilters />
@@ -69,22 +69,6 @@ export default async function HomePage({ searchParams }: Props) {
         ) : (
           <p className="text-sm text-zinc-500">No overvalued players meet eligibility for this filter.</p>
         )}
-      </section>
-
-      <section className="rounded-lg border border-surface-border bg-surface-raised p-6 space-y-4">
-        <h2 className="text-lg font-medium text-white">Reaves trajectory</h2>
-        <p className="text-sm text-zinc-500">
-          Undrafted guard flagged +8 in 2023-24; gap closed as perception rose from 63 to 83
-        </p>
-        <DiamondTrajectory data={reavesTraj} />
-      </section>
-
-      <section className="rounded-lg border border-surface-border bg-surface-raised p-6 space-y-4">
-        <h2 className="text-lg font-medium text-white">Pritchard trajectory</h2>
-        <p className="text-sm text-zinc-500">
-          Late first-round sixth man — small but persistent diamond gap as impact leads perception
-        </p>
-        <DiamondTrajectory data={pritchardTraj} />
       </section>
     </div>
   );

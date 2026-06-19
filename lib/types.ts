@@ -36,13 +36,20 @@ export type ScoredPlayer = PlayerSeason & {
   diamond: number;
 };
 
+export type ProfileStat = {
+  label: string;
+  value: string;
+  detail?: string;
+  tone?: "diamond" | "gold" | "neutral";
+};
+
 export type PlayerProfile = {
   id: string;
   name: string;
   team: string;
   pos: Position;
   tagline: string;
-  stats: Array<{ label: string; value: string }>;
+  stats: ProfileStat[];
   doubts?: Array<{ take: string; rebuttal: string }>;
 };
 
